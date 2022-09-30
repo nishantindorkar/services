@@ -1,0 +1,26 @@
+/root
+
+cd /etc/logrotate.d/
+cp libvirtd codefile
+vim codefile
+
+/root/testlog/*.log {
+		weekly
+		missingok
+		rotate 4
+		compress
+		copytruncate
+}
+
+cd /root/
+mkdir testlog
+vim logfile.log
+
+hii this is log file
+
+logrotate -f /etc/logrotate.conf
+cd /root/testlog/
+ls #ginzip file appear in the directory
+gunzip logfile.log-date.gz
+cat logfile.log-date
+#data in logfile.log printed on terminal

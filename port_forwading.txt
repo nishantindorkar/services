@@ -1,0 +1,22 @@
+* server side:
+
+vim /var/www/html/index.html
+Enter data
+
+firewall-cmd --list-all
+firewall-cmd --remove-port=80/tcp #remove if available or leave it
+
+firewall-cmd --add-forward-port=port=80:proto=tcp:toport=8080 --permanent
+firewall-cmd --reload
+
+vim /etc/httpd/conf/httpd.conf
+
+Listen 8080 #add port into this line
+
+systemctl restart httpd.service
+
+ifconfig #check server ip
+
+* client side:
+
+curl server ip

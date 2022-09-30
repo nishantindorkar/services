@@ -1,0 +1,37 @@
+create instance linux server (all default configuration)
+add security group rule custom TCP with port 8080 souce type anywhere
+
+open git bash
+
+ssh -i key.pem ec2-user@ip
+sudo su -
+wget *link* (go to tomcat.apache.org -> click on tomcat 8 -> core copy link address of tar.gz and paste next to wget )
+yum install java -y (to provide JAVA_HOME or the JRE_HOME environment variable )
+tar -xvzf apache-tomcat.tar.gz
+mv apache-tomcat-8.5.82 tomcat (rename folder)
+cd /tomcat/bin/
+./startup.sh
+go to browser and put public ip 
+
+to add username and password for manager follow below steps:
+find / -name context.xml
+/root/tomcat/conf/context.xml
+/root/tomcat/webapps/examples/META-INF/context.xml
+/root/tomcat/webapps/host-manager/META-INF/context.xml
+/root/tomcat/webapps/manager/META-INF/context.xml
+
+vim /root/tomcat/webapps/manager/META-INF/context.xml
+comment <!-- <value classname/> --> 
+
+vim /root/tomcat/webapps/host-manager/META-INF/context.xml
+comment <!-- <value classname/> --> 
+
+vim vim /root/tomcat/conf/tomcat-users.xml
+add below code to second last line
+<role rolename="manager-gui"/>
+<user username="tomcat" password="password" roles="manager-qui"/>
+
+<role rolename="manager-script"/>
+<user username="deployer" password="password" roles="manager-script"/>
+
+and check the page again to get into it or not.

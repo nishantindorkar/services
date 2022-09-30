@@ -1,0 +1,42 @@
+#add adapter NAT
+#All three machine should be in same internet netwaork
+
+
+* machine 1 ip 172.25.0.4
+
+curl localhost 
+hello i am server
+
+firewall-cmd --add-masquerade --permanent
+firewall-cmd --reload
+
+firewall-cmd --add-forward-port=port=80:proto=tcp:toaddr=172.25.0.6 --permanent
+firewall-cmd --reload
+
+
+* machine 2 ip 172.25.0.6
+
+yum install httpd
+vim /var/www/html/index.html
+this is clone server
+systemctl start httpd
+curl localhost
+
+firewall-cmd --add-service=http --permanent
+firewall-cmd --reload
+firewall-cmd --add-masquerade --permanent
+firewall-cmd --reload
+firewall-cmd --list-all
+
+
+* machine 3 ip 172.25.0.8 #172.25.0.4 ko ip hit karne par 172.25.0.6 ka data dikhana chahiye
+
+nmtui
+edit connections  #use second connection and edit
+ipv4 configuration <Manual>
+Addresses 172.25.0.8/24
+Gateway 172.25.0.1
+#deactivate and activate second connection of ethernet
+
+curl 172.25.0.4
+this is clone server #html page ip 172.25.0.6 shown when hit ip 172.25.0.4

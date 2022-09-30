@@ -1,0 +1,25 @@
+* server side :
+
+vim /etc/rsyslog.conf
+$ModLoad imtcp
+$InputTCPServerRun 514
+$template tmplAuth,"/var/log/%HOSTNAME%/%PROGRAMNAME%.log"
+*.* ?tmplAuth
+
+systemctl restart rsyslog.service
+
+firewall-cmd --add-port=514/tcp
+firewall-cmd --reload
+
+* client side :
+
+vim /etc/rsyslog.conf
+*.* @@IP:514 #add in second last line in the file.
+ 
+logger abc 
+ 
+* server side :
+cd /var/log #check the hostname is appeard or not
+
+cat /var/log/messages #abc message added from client.
+cat /var/log/client/user.log #abc message also added in this log.

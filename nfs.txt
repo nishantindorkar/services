@@ -1,0 +1,28 @@
+
+* server side:
+
+yum list installed | grep nfs
+yum install nfs-utils && yum install rpc-bind #if not installed nfs packages installed 
+mkdir /partition
+touch /partition/file{1..10}
+setfacl -m u:nfsnobody:rwx /partition/
+getfacl /partition/
+vim /etc/exports
+/partition 192.168.93.128/24(rw,sync)
+exportfs -arv
+systemctl start nfs
+
+firewall-cmd --add-service=nfs
+firewall-cmd --add-service=mountd (metadata stored of the file)
+firewall-cmd --add-service=rpc-bind (helping to real time data tranfer and manage)
+
+* client side:
+
+showmount -e 192.168.93.128
+
+vim /etc/fstab
+192.168.93.128:/partition /media nfs defaults 0 0 #add this line into fstab
+mount -a
+df -hT
+
+

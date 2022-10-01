@@ -1,0 +1,77 @@
+ftp port 20(control connection),port 21(data transfer connection)
+*extra error 
+vim /etc/resolv.conf
+nameserver 8.8.8.8
+
+*server side:
+sudo yum install vsftpd -y #very secure file tranfer protocol
+systemctl start vsftpd
+systemctl enable vsftpd
+firewall-cmd --add-service=ftp --permanent
+firewall-cmd --reload
+
+ftp localhost
+?
+!touch file1 #to make file in root
+
+history > mains
+ftp localhost
+put mains
+
+vim /etc/vsftpd/vsftpd.conf
+check write_enable=YES
+#anon_upload_enable=YES #uncomment it
+
+mkdir /var/ftp/shared #writable by ftp user
+chmod 777 shared
+
+->selinux policy
+getenforce
+enforcing
+getsebool -a
+setsebool ftpd_anon_write on
+setsebool ftpd_full_access on
+getsebool -a | grep ftp #to check the above value is on 
+
+systemctl restart vsftpd
+ftp localhost
+cd shared
+pwd
+put mains
+
+#to download or get file for client 
+vim /etc/vsftpd/vsftpd.conf
+#go last into the file and enter below code
+anon_umask=022
+systemctl restart vsftpd
+
+#to delete file
+vim /etc/vsftpd/vsftpd.conf
+#go last into the file and enter below code
+anon_other_write_enable=YES
+systemctl restart vsftpd
+
+#only local user can login(home directory)
+vim /etc/vsftpd/vsftpd.conf
+anonymous_enable=no #anonymous user access of root user was yes now no
+systemctl restart vsftpd
+
+*vim /etc/vsftpd/user_list #to view user who has access permission
+*vim /etc/vsftpd/ftpusers #names who not allow to login in ftp
+
+#only a perticular user can login
+vim /etc/vsftpd/vsftpd.conf
+userlist_deny=no  #in last line add this line
+systemctl restart vsftpd
+
+*client side:
+sudo yum install ftp
+ftp ip
+name : ftp
+password : (press enter becouse we don't set password)
+
+get mains
+put file
+firefox
+ftp://ip
+

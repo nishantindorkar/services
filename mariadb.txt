@@ -2,11 +2,13 @@ mariadb port = 3306
 sql(structured querry language)
 configuration : vim /etc/my.cnf
 
-* server side :
+*server side :
+
 yum install mariadb-server
 systemctl start mariadb
 mysql -u root #login mariadb with privilege of root
 
+mariadb>exit; #for exit 
 #configure mariadb without privilege to root
 mysql_secure_installation #script to run directly on terminal
 
@@ -25,23 +27,21 @@ mariadb>show databases; #showing all databases
 mariadb>create database student_data; 
 mariadb>show databases;
 mariadb>use student_data;
-mariadb>create table student_info; (name varchar(10),roll_no int,status varchar(10));
+mariadb>create table student_info (name varchar(10),roll_no int,status varchar(10));
 mariadb>describe student_info #describtion of table
 mariadb>show tables;
 mariadb>insert into student_info values ('user1',100,'pass'); #insert data into table
 mariadb>insert into student_info values ('user2',101,'pass');
 mariadb>select * from student_info;
-mariadb>select name from student_info where status = 'pass' #name of pass status student data shown
-mariadb>select name,roll_no from student_info where status = 'pass' #name and roll_no of pass status student data shown
+mariadb>delete from list where seat_no='4'; #to delete from row
+mariadb>select name from student_info where status = 'pass'; #name of pass status student data shown
+mariadb>select name,roll_no from student_info where status = 'pass'; #name and roll_no of pass status student data shown
 mariadb>select name from student_info where roll_no = 100;
 mariadb>select * from student_info #to see all table 
 mariadb>show tables; #showing table info 
-mariadb>drop student_info; #to delete table
-mariadb>
-mariadb>
-mariadb>
+mariadb>drop table student_info; #to delete table
 
-mysql -u root -h localhost -ppassword student_data > file.bkp #to redirect table data into the backup file
+mysqldump -u root -h localhost -ppassword student_data > file.bkp #to redirect table data into the backup file
 mysql -u root -h localhost -ppassword student_data < file.bkp #to retrive data from the backup file
 mysqldump -u root -h localhost -ppassword student_data --no-data > file.bkp #for schema generate
 mysqldump -u root -h localhost -ppassword student_data --no-create-info > file.bkp #for only data

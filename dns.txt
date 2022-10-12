@@ -1,0 +1,53 @@
+resolve name to ip --> forword lookup
+resolve ip to name --> reverse lookup
+
+* server
+hostname server.abc.com 
+bash
+
+yum install bind bind-utils
+
+nmtui 
+enpos8 #check with ifconfig and do change in this address
+edit connection 
+manual
+address: 172.25.0.10/24
+gateway: 172.25.0.1
+
+vim /etc/named.conf #do changes as below
+options{
+    listen-on port 53 (127.0.0.1; 172.25.0.10; );
+    --
+    --
+    --
+    allow-query (localhost; any; );
+};
+zone "abc.com" IN {
+   type master;
+   file "abc.fwd";
+   allow-update{ none; }; 
+};  #vim /etc/named.rfc1912.zones add zone from this file
+
+cp /var/named/named.localhost /var/named/abc.fwd
+
+vim /var/named/abc.fwd
+$TTL
+        IN SOA server.abc.com. root.abc.com. {
+        --
+        --
+        }
+abc.com.              IN                  NS     server.abc.com.
+server.abc.com.       IN                  A      127.25.0.10
+client.abc.com.       IN                  A      127.25.0.50
+facebook.abc.com.     IN                  A      192.168.0.100
+fb.abc.com.           IN                 CNAME   facebook.abc.com.
+
+chgrp named /var/named/abc.fwd
+
+systemctl start named
+
+vim /etc/resolv.conf
+nameserver 172.25.0.10
+
+nslookup facebook.abc.com
+nslookup client.abc.com

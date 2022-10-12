@@ -1,0 +1,67 @@
+* server
+
+yum install dhcp
+vim /etc/dhcp/dhcpd.conf
+
+cat /usr/share/doc/dhcp-4.2.5/dhcpd.conf.example >> /etc/dhcp/dhcpd.conf #copy file
+vim /etc/dhcp/dhcpd.conf
+
+sed -e s/^/#/ /etc/dhcp/dhcpd.conf #to see all line commented on terminal
+sed -i s/^/#/ /etc/dhcp/dhcpd.conf #to impliment all line commented on 
+terminal
+
+# :set nu fro numbering the lines
+# in /etc/dhcp/dhcpd.conf file uncomment line number 37 to 40 and do changes written in below 
+subnet 172.25.0.0 netmask 255.255.255.0 {
+    range 172.25.0.11 172.25.0.20;
+}
+
+nmtui 
+enpos8 #check with ifconfig and do change in this address
+edit connection 
+manual
+address: 172.25.0.10/24
+gateway: 172.25.0.1
+
+systemctl start dhcpd
+firewall-cmd --add-service=dhcp
+firewall-cmd --list-all #check dhcp service added
+
+#nameserver, domain name Assign
+vim /etc/dhcp/dhcpd.conf
+
+subnet 172.25.0.0 netmask 255.255.255.0 {
+    range 172.25.0.11 172.25.0.20;
+    option domain-name-servers 8.8.8.8; #copy this line from 54  
+    option domain-name "demo.com"; #copy this line from 55
+}
+
+systemctl start dhcpd
+
+#static ip Assign #for permanent ip assign by server to client
+vim /etc/dhcp/dhcpd.conf
+#uncomment line nu 81,82,83 and do same changes as below
+host demo.com{
+    hardware ethernet 88:00:22:e5:5f:45; #enter mac address of client enpos8
+    fixed-address 172.25.0.100; #fixed ip 
+}
+
+systemctl start dhcpd
+
+* client
+
+nmtui
+enpos8
+edit connection
+automatic
+
+#nameserver, domain name Assign
+systemctl restart network
+systemctl restart NetworkManager
+ifconfig
+vim /etc/resolv.conf #check manually
+
+#static ip Assign
+systemctl restart network
+systemctl restart NetworkManager
+ifconfig
